@@ -305,12 +305,16 @@ class _RadialNavigationDockState extends State<RadialNavigationDock> {
     final radius = _radius(width);
     final children = <Widget>[];
 
-    for (var slot = -1; slot <= 1; slot++) {
+    // Keep a pair of edge destinations mounted outside the visible three.
+    // They fade in as they approach the wheel instead of popping into view
+    // when the selected index crosses an integer.
+    for (var slot = -2; slot <= 2; slot++) {
       final offset = slot - fraction;
       final angle = offset * widget.itemAngularSpacing;
       final x = width / 2 + radius * math.sin(angle);
       final y = _selectedIconCenterY + radius * (1 - math.cos(angle));
       final focus = (1 - offset.abs()).clamp(0.0, 1.0).toDouble();
+      final opacity = (2 - offset.abs()).clamp(0.0, 1.0).toDouble();
       final destination = _items[_mod(whole + slot)];
       children.add(
         Positioned(
@@ -322,6 +326,7 @@ class _RadialNavigationDockState extends State<RadialNavigationDock> {
           child: _DialItem(
             destination: destination,
             focus: focus,
+            opacity: opacity,
             direction: _ar ? TextDirection.rtl : TextDirection.ltr,
             onTap: () => _select(_mod(whole + slot)),
           ),
@@ -405,6 +410,7 @@ class _RadialNavigationDockState extends State<RadialNavigationDock> {
             child: _DialItem(
               destination: current,
               focus: 1,
+              opacity: 1,
               direction: _ar ? TextDirection.rtl : TextDirection.ltr,
               onTap: _toggleExpanded,
             ),
@@ -455,12 +461,14 @@ class _DialItem extends StatelessWidget {
   const _DialItem({
     required this.destination,
     required this.focus,
+    required this.opacity,
     required this.direction,
     required this.onTap,
   });
 
   final _Destination destination;
   final double focus;
+  final double opacity;
   final TextDirection direction;
   final VoidCallback onTap;
 
@@ -476,36 +484,43 @@ class _DialItem extends StatelessWidget {
           focus,
         )!;
     final iconColor = Color.lerp(color, Colors.white, focus)!;
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: destination.label,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: SizedBox.expand(
-          child: Center(
-            child: Container(
-              width: size,
-              height: size,
-              decoration: BoxDecoration(
-                color: scheme.primary.withValues(alpha: focus),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: MasarColors.mint.withValues(alpha: 0.7 * focus),
-                  width: 1.2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: scheme.primary.withValues(alpha: 0.18 * focus),
-                    blurRadius: 7 * focus,
+    return IgnorePointer(
+      ignoring: opacity < 0.35,
+      child: Opacity(
+        opacity: opacity,
+        child: Semantics(
+          button: true,
+          selected: selected,
+          label: destination.label,
+          excludeSemantics: opacity < 0.5,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onTap,
+            child: SizedBox.expand(
+              child: Center(
+                child: Container(
+                  width: size,
+                  height: size,
+                  decoration: BoxDecoration(
+                    color: scheme.primary.withValues(alpha: focus),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: MasarColors.mint.withValues(alpha: 0.7 * focus),
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: scheme.primary.withValues(alpha: 0.18 * focus),
+                        blurRadius: 7 * focus,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Icon(
-                destination.icon,
-                size: 15 + 8 * focus,
-                color: iconColor,
+                  child: Icon(
+                    destination.icon,
+                    size: 15 + 8 * focus,
+                    color: iconColor,
+                  ),
+                ),
               ),
             ),
           ),
