@@ -548,15 +548,10 @@ class _Header extends StatelessWidget {
                       ),
                     )
                     : Center(
-                      child: Text(
-                        settings.name.isNotEmpty
-                            ? settings.name.characters.first
-                            : (AppLocalizations.of(context)!.z),
-                        style: const TextStyle(
-                          color: MasarColors.emerald,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
+                      child: const Icon(
+                        Icons.person_rounded,
+                        color: MasarColors.emerald,
+                        size: 21,
                       ),
                     ),
           ),
