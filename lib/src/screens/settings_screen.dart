@@ -1335,47 +1335,65 @@ List<Widget> _data(BuildContext context, WidgetRef ref) => [
   ]),
 ];
 
-List<Widget> _about(BuildContext context) => [
-  _section(context, AppLocalizations.of(context)!.gaddash, [
+List<Widget> _about(BuildContext context) {
+  final strings = AppLocalizations.of(context)!;
+  final colors = Theme.of(context).colorScheme;
+
+  return [
+    Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: colors.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.account_balance_wallet_rounded, color: colors.primary),
+              const SizedBox(width: 10),
+              Text(
+                strings.appName,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          Text(
+            strings.offlinePersonalFinanceTracking,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            strings.yourFinancialDataStaysOnThisDevice,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+          ),
+        ],
+      ),
+    ),
+    const SizedBox(height: 12),
     FutureBuilder<Map<Object?, Object?>?>(
       future: const MethodChannel(
         'gaddash/privacy',
       ).invokeMapMethod<Object?, Object?>('getAppInfo'),
-      builder:
-          (context, snapshot) => ListTile(
-            leading: const Icon(Icons.info_outline_rounded),
-            title: Text(AppLocalizations.of(context)!.installedVersion),
-            subtitle: Text(
-              snapshot.hasData
-                  ? '${snapshot.data!['version']} (${snapshot.data!['build']})'
-                  : '…',
-            ),
-          ),
+      builder: (context, snapshot) {
+        final version = snapshot.data?['version']?.toString();
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+          leading: Icon(Icons.new_releases_outlined, color: colors.primary),
+          title: Text(strings.installedVersion),
+          subtitle: Text(version?.isNotEmpty == true ? version! : '…'),
+        );
+      },
     ),
-    _tile(
-      context,
-      Icons.description_outlined,
-      AppLocalizations.of(context)!.aboutTheApp,
-      AppLocalizations.of(context)!.offlinePersonalFinanceTracking,
-      () => showAboutDialog(
-        context: context,
-        applicationName: AppLocalizations.of(context)!.appName,
-        applicationLegalese:
-            AppLocalizations.of(context)!.yourFinancialDataStaysOnThisDevice,
-      ),
-    ),
-    _tile(
-      context,
-      Icons.code_rounded,
-      AppLocalizations.of(context)!.openSourceLicenses,
-      AppLocalizations.of(context)!.packagesUsedByTheApp,
-      () => showLicensePage(
-        context: context,
-        applicationName: AppLocalizations.of(context)!.appName,
-      ),
-    ),
-  ]),
-];
+  ];
+}
 
 class CategoryManagerScreen extends ConsumerWidget {
   const CategoryManagerScreen({super.key});

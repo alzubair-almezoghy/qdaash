@@ -547,8 +547,8 @@ class _Header extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
                     )
-                    : Center(
-                      child: const Icon(
+                    : const Center(
+                      child: Icon(
                         Icons.person_rounded,
                         color: MasarColors.emerald,
                         size: 21,
