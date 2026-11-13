@@ -456,29 +456,31 @@ Future<void> _set(
 
 Widget _languageTile(BuildContext context, WidgetRef ref) {
   final settings = ref.watch(settingsProvider);
+  final isArabic = settings.language == 'ar';
+
+  Future<void> setLanguage(bool arabic) async {
+    final language = arabic ? 'ar' : 'en';
+    if (language == settings.language) return;
+
+    await _run(context, () async {
+      await ref.read(settingsProvider.notifier).set('language', language);
+      try {
+        await NotificationService.refreshScheduledContent(
+          ref.read(settingsProvider),
+        );
+      } catch (_) {
+        // A denied notification permission does not undo language selection.
+      }
+    });
+  }
+
   return _tile(
     context,
     Icons.language_rounded,
     AppLocalizations.of(context)!.language,
-    settings.language == 'ar' ? 'العربية' : 'English',
-    () async {
-      final value = await _choice(
-        context,
-        AppLocalizations.of(context)!.language,
-        {'ar': 'العربية', 'en': 'English'},
-      );
-      if (value == null || !context.mounted) return;
-      await _run(context, () async {
-        await ref.read(settingsProvider.notifier).set('language', value);
-        try {
-          await NotificationService.refreshScheduledContent(
-            ref.read(settingsProvider),
-          );
-        } catch (_) {
-          // A denied notification permission does not undo language selection.
-        }
-      });
-    },
+    isArabic ? 'العربية' : 'English',
+    () => setLanguage(!isArabic),
+    trailing: Switch(value: isArabic, onChanged: setLanguage),
   );
 }
 
