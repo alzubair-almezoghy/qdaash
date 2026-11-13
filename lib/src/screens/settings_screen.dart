@@ -424,19 +424,25 @@ class _SettingsPage extends ConsumerWidget {
     };
     return Scaffold(
       appBar: AppBar(title: Text(title)),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-        children: switch (page) {
-          'profile' => _profile(context, ref),
-          'appearance' => _appearance(context, ref),
-          'financial' => _financial(context, ref),
-          'notifications' => _notifications(context, ref),
-          'security' => _security(context, ref),
-          'insights' => _insights(context, ref),
-          'data' => _data(context, ref),
-          _ => _about(context),
-        },
-      ),
+      body:
+          page == 'about'
+              ? Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                child: _about(context),
+              )
+              : ListView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                children: switch (page) {
+                  'profile' => _profile(context, ref),
+                  'appearance' => _appearance(context, ref),
+                  'financial' => _financial(context, ref),
+                  'notifications' => _notifications(context, ref),
+                  'security' => _security(context, ref),
+                  'insights' => _insights(context, ref),
+                  'data' => _data(context, ref),
+                  _ => const <Widget>[],
+                },
+              ),
     );
   }
 }
@@ -1335,65 +1341,77 @@ List<Widget> _data(BuildContext context, WidgetRef ref) => [
   ]),
 ];
 
-List<Widget> _about(BuildContext context) {
+Widget _about(BuildContext context) {
   final strings = AppLocalizations.of(context)!;
   final colors = Theme.of(context).colorScheme;
 
-  return [
-    Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: colors.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.account_balance_wallet_rounded, color: colors.primary),
-              const SizedBox(width: 10),
-              Text(
-                strings.appName,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-              ),
-            ],
+  return Column(
+    children: [
+      Expanded(
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: colors.outlineVariant),
           ),
-          const SizedBox(height: 18),
-          Text(
-            strings.aboutAppDescription,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.6),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            strings.aboutAppBenefit,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: colors.onSurfaceVariant,
-              height: 1.6,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.account_balance_wallet_rounded,
+                      color: colors.primary,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      strings.appName,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 22),
+                Text(
+                  strings.aboutAppDescription,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(height: 1.6),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  strings.aboutAppBenefit,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colors.onSurfaceVariant,
+                    height: 1.6,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
-    ),
-    const SizedBox(height: 12),
-    FutureBuilder<Map<Object?, Object?>?>(
-      future: const MethodChannel(
-        'gaddash/privacy',
-      ).invokeMapMethod<Object?, Object?>('getAppInfo'),
-      builder: (context, snapshot) {
-        final version = snapshot.data?['version']?.toString();
-        return ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-          leading: Icon(Icons.new_releases_outlined, color: colors.primary),
-          title: Text(strings.installedVersion),
-          subtitle: Text(version?.isNotEmpty == true ? version! : '…'),
-        );
-      },
-    ),
-  ];
+      const SizedBox(height: 10),
+      FutureBuilder<Map<Object?, Object?>?>(
+        future: const MethodChannel(
+          'gaddash/privacy',
+        ).invokeMapMethod<Object?, Object?>('getAppInfo'),
+        builder: (context, snapshot) {
+          final version = snapshot.data?['version']?.toString();
+          return ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+            leading: Icon(Icons.new_releases_outlined, color: colors.primary),
+            title: Text(strings.installedVersion),
+            subtitle: Text(version?.isNotEmpty == true ? version! : '…'),
+          );
+        },
+      ),
+    ],
+  );
 }
 
 class CategoryManagerScreen extends ConsumerWidget {
