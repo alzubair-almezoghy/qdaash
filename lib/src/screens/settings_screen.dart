@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -187,154 +188,160 @@ class SettingsScreen extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     final accent = Theme.of(context).colorScheme.primary;
     final avatar = settings.avatar;
-    return Scaffold(
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back_rounded),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  AppLocalizations.of(context)!.settings,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            const SizedBox(height: 18),
-            InkWell(
-              onTap: () => _open(context, 'profile'),
-              borderRadius: BorderRadius.circular(25),
-              child: Container(
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [accent, accent.withValues(alpha: .78)],
+    return PopScope<void>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) context.go('/home');
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () => context.go('/home'),
+                    icon: const Icon(Icons.arrow_back_rounded),
                   ),
-                  borderRadius: BorderRadius.circular(25),
-                  boxShadow: [
-                    BoxShadow(
-                      color: accent.withValues(alpha: .16),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppLocalizations.of(context)!.settings,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              InkWell(
+                onTap: () => _open(context, 'profile'),
+                borderRadius: BorderRadius.circular(25),
+                child: Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [accent, accent.withValues(alpha: .78)],
                     ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundColor: Colors.white.withValues(alpha: .22),
-                      backgroundImage:
-                          avatar.isNotEmpty && File(avatar).existsSync()
-                              ? FileImage(File(avatar))
-                              : null,
-                      child:
-                          avatar.isEmpty
-                              ? const Icon(
-                                Icons.person_rounded,
-                                color: Colors.white,
-                                size: 28,
-                              )
-                              : null,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            settings.name.isEmpty
-                                ? AppLocalizations.of(context)!.yourProfile
-                                : settings.name,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 17,
-                            ),
-                          ),
-                          Text(
-                            AppLocalizations.of(
-                              context,
-                            )!.personalizeYourExperience,
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: .78),
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: accent.withValues(alpha: .16),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
                       ),
-                    ),
-                    const Icon(
-                      Icons.chevron_right_rounded,
-                      color: Colors.white,
-                    ),
-                  ],
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundColor: Colors.white.withValues(alpha: .22),
+                        backgroundImage:
+                            avatar.isNotEmpty && File(avatar).existsSync()
+                                ? FileImage(File(avatar))
+                                : null,
+                        child:
+                            avatar.isEmpty
+                                ? const Icon(
+                                  Icons.person_rounded,
+                                  color: Colors.white,
+                                  size: 28,
+                                )
+                                : null,
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              settings.name.isEmpty
+                                  ? AppLocalizations.of(context)!.yourProfile
+                                  : settings.name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 17,
+                              ),
+                            ),
+                            Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.personalizeYourExperience,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: .78),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            _section(context, AppLocalizations.of(context)!.personalization, [
-              _tile(
-                context,
-                Icons.palette_outlined,
-                AppLocalizations.of(context)!.appearance,
-                AppLocalizations.of(context)!.themeAccentAndMotion,
-                () => _open(context, 'appearance'),
-              ),
-              _languageTile(context, ref),
-              _tile(
-                context,
-                Icons.account_balance_wallet_outlined,
-                AppLocalizations.of(context)!.financialPreferences,
-                AppLocalizations.of(context)!.budgetAndCategories,
-                () => _open(context, 'financial'),
-              ),
-            ]),
-            _section(context, AppLocalizations.of(context)!.control, [
-              _tile(
-                context,
-                Icons.notifications_none_rounded,
-                AppLocalizations.of(context)!.notifications,
-                AppLocalizations.of(context)!.localRemindersAndAlerts,
-                () => _open(context, 'notifications'),
-              ),
-              _tile(
-                context,
-                Icons.lock_outline_rounded,
-                AppLocalizations.of(context)!.privacyAndSecurity,
-                AppLocalizations.of(context)!.pinBiometricsAndBalances,
-                () => _open(context, 'security'),
-              ),
-              _tile(
-                context,
-                Icons.lightbulb_outline_rounded,
-                AppLocalizations.of(context)!.financialInsights,
-                AppLocalizations.of(context)!.offlineSummaries,
-                () => _open(context, 'insights'),
-              ),
-            ]),
-            _section(context, AppLocalizations.of(context)!.yourData, [
-              _tile(
-                context,
-                Icons.inventory_2_outlined,
-                AppLocalizations.of(context)!.dataManagement,
-                AppLocalizations.of(context)!.exportBackupAndRestore,
-                () => _open(context, 'data'),
-              ),
-              _tile(
-                context,
-                Icons.info_outline_rounded,
-                AppLocalizations.of(context)!.aboutGaddash,
-                AppLocalizations.of(context)!.versionAndLicenses,
-                () => _open(context, 'about'),
-              ),
-            ]),
-          ],
+              const SizedBox(height: 24),
+              _section(context, AppLocalizations.of(context)!.personalization, [
+                _tile(
+                  context,
+                  Icons.palette_outlined,
+                  AppLocalizations.of(context)!.appearance,
+                  AppLocalizations.of(context)!.themeAccentAndMotion,
+                  () => _open(context, 'appearance'),
+                ),
+                _languageTile(context, ref),
+                _tile(
+                  context,
+                  Icons.account_balance_wallet_outlined,
+                  AppLocalizations.of(context)!.financialPreferences,
+                  AppLocalizations.of(context)!.budgetAndCategories,
+                  () => _open(context, 'financial'),
+                ),
+              ]),
+              _section(context, AppLocalizations.of(context)!.control, [
+                _tile(
+                  context,
+                  Icons.notifications_none_rounded,
+                  AppLocalizations.of(context)!.notifications,
+                  AppLocalizations.of(context)!.localRemindersAndAlerts,
+                  () => _open(context, 'notifications'),
+                ),
+                _tile(
+                  context,
+                  Icons.lock_outline_rounded,
+                  AppLocalizations.of(context)!.privacyAndSecurity,
+                  AppLocalizations.of(context)!.pinBiometricsAndBalances,
+                  () => _open(context, 'security'),
+                ),
+                _tile(
+                  context,
+                  Icons.lightbulb_outline_rounded,
+                  AppLocalizations.of(context)!.financialInsights,
+                  AppLocalizations.of(context)!.offlineSummaries,
+                  () => _open(context, 'insights'),
+                ),
+              ]),
+              _section(context, AppLocalizations.of(context)!.yourData, [
+                _tile(
+                  context,
+                  Icons.inventory_2_outlined,
+                  AppLocalizations.of(context)!.dataManagement,
+                  AppLocalizations.of(context)!.exportBackupAndRestore,
+                  () => _open(context, 'data'),
+                ),
+                _tile(
+                  context,
+                  Icons.info_outline_rounded,
+                  AppLocalizations.of(context)!.aboutGaddash,
+                  AppLocalizations.of(context)!.versionAndLicenses,
+                  () => _open(context, 'about'),
+                ),
+              ]),
+            ],
+          ),
         ),
       ),
     );
