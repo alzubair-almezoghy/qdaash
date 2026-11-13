@@ -15,6 +15,7 @@ void main() {
     addTearDown(rotationController.dispose);
     var selected = 0;
     var adds = 0;
+    var settingsOpens = 0;
 
     await tester.pumpWidget(
       MaterialApp(
@@ -39,6 +40,7 @@ void main() {
                           selected = index;
                         }),
                     onAdd: () => adds++,
+                    onSettings: () => settingsOpens++,
                   ),
                 ),
               ),
@@ -90,5 +92,8 @@ void main() {
     await tester.tap(find.byIcon(Icons.add_rounded));
     await tester.pump();
     expect(adds, 1);
+
+    await tester.tap(find.byIcon(Icons.settings_rounded));
+    expect(settingsOpens, 1);
   });
 }

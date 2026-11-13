@@ -48,6 +48,7 @@ void main() {
                       onDestinationSelected:
                           (index) => setState(() => selectedIndex = index),
                       onAdd: () {},
+                      onSettings: () {},
                     ),
                   ],
                 ),

@@ -258,6 +258,7 @@ class MasarShell extends StatelessWidget {
             reduceMotion: MediaQuery.of(context).disableAnimations,
             onDestinationSelected: shell.goBranch,
             onAdd: onAdd,
+            onSettings: () => context.push('/settings'),
           ),
         ),
       ],

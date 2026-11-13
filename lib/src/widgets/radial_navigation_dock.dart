@@ -13,6 +13,7 @@ class RadialNavigationDock extends StatefulWidget {
     required this.selectedIndex,
     required this.onDestinationSelected,
     required this.onAdd,
+    required this.onSettings,
     required this.locale,
     this.haptics = true,
     this.reduceMotion = false,
@@ -24,6 +25,7 @@ class RadialNavigationDock extends StatefulWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
   final VoidCallback onAdd;
+  final VoidCallback onSettings;
   final Locale locale;
   final bool haptics;
   final bool reduceMotion;
@@ -276,6 +278,16 @@ class _RadialNavigationDockState extends State<RadialNavigationDock> {
                       ),
                     if (_expanded)
                       Positioned(
+                        left: 8,
+                        top: 1,
+                        child: _SmallButton(
+                          icon: Icons.settings_rounded,
+                          label: AppLocalizations.of(context)!.settings,
+                          onTap: widget.onSettings,
+                        ),
+                      ),
+                    if (_expanded)
+                      Positioned(
                         left: width / 2 - 19,
                         bottom: 1,
                         child: _addButton(),
@@ -424,6 +436,15 @@ class _RadialNavigationDockState extends State<RadialNavigationDock> {
           ),
         ),
         Positioned(left: width / 2 - 19, bottom: 1, child: _addButton()),
+        Positioned(
+          left: 8,
+          top: 1,
+          child: _SmallButton(
+            icon: Icons.settings_rounded,
+            label: AppLocalizations.of(context)!.settings,
+            onTap: widget.onSettings,
+          ),
+        ),
         Positioned(
           right: 8,
           top: 1,

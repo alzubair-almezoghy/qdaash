@@ -504,16 +504,6 @@ class _Header extends StatelessWidget {
             ],
           ),
         ),
-        IconButton.filledTonal(
-          tooltip: AppLocalizations.of(context)!.settings,
-          style: IconButton.styleFrom(
-            backgroundColor: p.card,
-            foregroundColor: p.text,
-            fixedSize: const Size(42, 42),
-          ),
-          onPressed: () => context.push('/settings'),
-          icon: const Icon(Icons.settings_outlined, size: 19),
-        ),
         if (showReveal)
           IconButton(
             tooltip:
