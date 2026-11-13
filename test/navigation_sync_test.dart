@@ -38,6 +38,7 @@ void main() {
                           Center(child: Text('Transactions page')),
                           Center(child: Text('Reports page')),
                           Center(child: Text('Goals page')),
+                          Center(child: Text('Settings page')),
                         ],
                       ),
                     ),
@@ -48,7 +49,6 @@ void main() {
                       onDestinationSelected:
                           (index) => setState(() => selectedIndex = index),
                       onAdd: () {},
-                      onSettings: () {},
                     ),
                   ],
                 ),

@@ -5,7 +5,7 @@ import 'package:masar_finance/l10n/generated/app_localizations.dart';
 import 'package:masar_finance/src/widgets/radial_navigation_dock.dart';
 
 void main() {
-  testWidgets('four destinations rotate safely and keep Add available', (
+  testWidgets('five destinations rotate safely and keep Add available', (
     tester,
   ) async {
     final rotationController = AnimationController.unbounded(
@@ -15,7 +15,6 @@ void main() {
     addTearDown(rotationController.dispose);
     var selected = 0;
     var adds = 0;
-    var settingsOpens = 0;
 
     await tester.pumpWidget(
       MaterialApp(
@@ -40,7 +39,6 @@ void main() {
                           selected = index;
                         }),
                     onAdd: () => adds++,
-                    onSettings: () => settingsOpens++,
                   ),
                 ),
               ),
@@ -55,6 +53,7 @@ void main() {
       'Transactions',
       'Reports',
       'Financial Goals',
+      'Settings',
       'Home',
     ]) {
       await tester.drag(
@@ -62,14 +61,14 @@ void main() {
         const Offset(-50, 0),
       );
       await tester.pumpAndSettle();
-      expect(selected, inInclusiveRange(0, 3));
+      expect(selected, inInclusiveRange(0, 4));
       expect(find.text(destination), findsOneWidget);
     }
 
     expect(selected, 0);
     await tester.drag(find.byType(RadialNavigationDock), const Offset(45, 0));
     await tester.pumpAndSettle();
-    expect(selected, inInclusiveRange(0, 3));
+    expect(selected, inInclusiveRange(0, 4));
 
     final dock = find.byType(RadialNavigationDock);
     for (final direction in [
@@ -83,7 +82,13 @@ void main() {
       expect(tester.takeException(), isNull);
     }
     await tester.pumpAndSettle();
-    expect(selected, inInclusiveRange(0, 3));
+    expect(selected, inInclusiveRange(0, 4));
+
+    for (var attempt = 0; selected != 0 && attempt < 5; attempt++) {
+      await tester.drag(dock, const Offset(-50, 0));
+      await tester.pumpAndSettle();
+    }
+    expect(selected, 0);
 
     await tester.tap(find.byIcon(Icons.receipt_long_rounded));
     await tester.pumpAndSettle();
@@ -93,7 +98,11 @@ void main() {
     await tester.pump();
     expect(adds, 1);
 
+    await tester.drag(dock, const Offset(45, 0));
+    await tester.pumpAndSettle();
+    expect(selected, 0);
     await tester.tap(find.byIcon(Icons.settings_rounded));
-    expect(settingsOpens, 1);
+    await tester.pumpAndSettle();
+    expect(selected, 4);
   });
 }

@@ -117,9 +117,16 @@ class _MasarAppState extends ConsumerState<MasarApp>
               GoRoute(path: '/goals', builder: (_, __) => const GoalsScreen()),
             ],
           ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/settings',
+                builder: (_, __) => const SettingsScreen(),
+              ),
+            ],
+          ),
         ],
       ),
-      GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
     ],
   );
 
@@ -258,7 +265,6 @@ class MasarShell extends StatelessWidget {
             reduceMotion: MediaQuery.of(context).disableAnimations,
             onDestinationSelected: shell.goBranch,
             onAdd: onAdd,
-            onSettings: () => context.push('/settings'),
           ),
         ),
       ],
