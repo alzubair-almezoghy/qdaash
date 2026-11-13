@@ -1364,15 +1364,16 @@ List<Widget> _about(BuildContext context) {
           ),
           const SizedBox(height: 18),
           Text(
-            strings.offlinePersonalFinanceTracking,
-            style: Theme.of(context).textTheme.bodyLarge,
+            strings.aboutAppDescription,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.6),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
-            strings.yourFinancialDataStaysOnThisDevice,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+            strings.aboutAppBenefit,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: colors.onSurfaceVariant,
+              height: 1.6,
+            ),
           ),
         ],
       ),

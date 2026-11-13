@@ -521,6 +521,18 @@ abstract class AppLocalizations {
   /// **'About the app'**
   String get aboutTheApp;
 
+  /// No description provided for @aboutAppDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Qdaash is a personal finance app that helps you record income and expenses, organize them by category and wallet, and keep track of your budget and savings goals in one place. Clear reports make it easier to understand how your spending changes over time.'**
+  String get aboutAppDescription;
+
+  /// No description provided for @aboutAppBenefit.
+  ///
+  /// In en, this message translates to:
+  /// **'See where your money goes, notice expenses you may want to adjust, and plan savings and financial decisions with more confidence. The app works offline, and your financial records stay on your device.'**
+  String get aboutAppBenefit;
+
   /// No description provided for @accentColor.
   ///
   /// In en, this message translates to:
