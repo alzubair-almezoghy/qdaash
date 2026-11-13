@@ -84,7 +84,6 @@ class _MasarAppState extends ConsumerState<MasarApp>
         navigatorContainerBuilder:
             (context, navigationShell, children) => StatefulBranchTransitions(
               rotationController: _navigationRotation,
-              isRtl: Localizations.localeOf(context).languageCode == 'ar',
               children: children,
             ),
         branches: [

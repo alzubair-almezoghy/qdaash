@@ -5,13 +5,11 @@ class StatefulBranchTransitions extends StatefulWidget {
   const StatefulBranchTransitions({
     required this.rotationController,
     required this.children,
-    this.isRtl = false,
     super.key,
   });
 
   final AnimationController rotationController;
   final List<Widget> children;
-  final bool isRtl;
 
   @override
   State<StatefulBranchTransitions> createState() =>
@@ -78,7 +76,10 @@ class _StatefulBranchTransitionsState extends State<StatefulBranchTransitions> {
         outgoingIndex,
         incomingIndex,
       ];
-      final direction = (widget.isRtl ? -1.0 : 1.0) * _travelDirection;
+      // The wheel keeps the same physical rotation in both locales. Mirror
+      // text and layout for RTL, but keep page movement tied to the wheel's
+      // actual travel so the incoming page follows the icon into the center.
+      final direction = _travelDirection;
 
       // The clip belongs to the viewport, not either moving page. At every
       // point in the transition the two page bounds meet without overlapping.
