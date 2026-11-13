@@ -1356,42 +1356,56 @@ Widget _about(BuildContext context) {
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: colors.outlineVariant),
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.account_balance_wallet_rounded,
-                      color: colors.primary,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      strings.appName,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final scale =
+                  (constraints.maxHeight / 600).clamp(0.95, 1.2).toDouble();
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.account_balance_wallet_rounded,
+                            color: colors.primary,
+                            size: 30 * scale,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            strings.appName,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleLarge?.copyWith(
+                              fontSize: 26 * scale,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 22),
-                Text(
-                  strings.aboutAppDescription,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(height: 1.6),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  strings.aboutAppBenefit,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
-                    height: 1.6,
+                      Text(
+                        strings.aboutAppDescription,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontSize: 20 * scale,
+                          height: 1.65,
+                        ),
+                      ),
+                      Text(
+                        strings.aboutAppBenefit,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: colors.onSurfaceVariant,
+                          fontSize: 18 * scale,
+                          height: 1.65,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
